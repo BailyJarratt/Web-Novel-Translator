@@ -73,7 +73,7 @@ The script will:
 - `Script.py`: Main Python script containing the scraping, translation, and Google Drive logic.
 - `credentials.json`: Google API credentials (not included in repo for security).
 - `token.json`: OAuth token generated after first authentication (not included in repo).
-- `the_data.csv`: CSV file containing the extracted and translated data.
+- `the_data.csv`: CSV file containing the extracted and translated data (containsa few example data entries).
 
 ## Disclaimer
 
