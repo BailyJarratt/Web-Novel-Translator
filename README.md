@@ -1,4 +1,4 @@
-<h1>Web-Novel-Translator</h1>
+# Web-Novel-Translator
 
 ## Overview
 
