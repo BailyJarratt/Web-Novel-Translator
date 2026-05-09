@@ -1,8 +1,20 @@
 # Web-Novel-Translator
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Workflow](#workflow)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [File Structure](#file-structure)
+- [How it Works](#how-it-works)
+- [Disclaimer](#disclaimer)
+
 ## Overview
 
-This project is a web scraping and translation tool designed to extract chapters from a Chinese novel website, translate the content from Chinese to English, and store the data in a CSV file. It integrates with Google Drive for data persistence, allowing users to upload, download, and update the dataset seamlessly.
+This project is a web scraping and translation tool designed to extract chapters from a Chinese novel website, translate the content from Chinese to English, and store the data in a CSV file. It integrates with Google Drive for data persistence, allowing users to upload, download, and update the dataset seamlessly. Built with Prefect for workflow orchestration, it enables automation, application monitoring, and maintanence.
 
 The script automates the process of collecting and translating novel chapters, making it easier to access translated content.
 
@@ -13,6 +25,18 @@ The script automates the process of collecting and translating novel chapters, m
 - **Google Drive Integration**: Uploads and downloads CSV files to/from Google Drive for data storage and synchronization.
 - **Incremental Updates**: Tracks the latest chapter processed and continues from where it left off.
 - **Data Persistence**: Stores extracted data in a CSV format with columns for Chapter, Title, Rawtext, and Translation.
+
+## Workflow
+
+*Diagram showing the data flow of the script.
+
+### Orchestration with Prefect
+
+- The script uses Prefect for workflow orchestration to manage the sequence of tasks: Google Drive setup, web scraping, translation, and data persistence.
+- Functions are decorated with `@flow` for the main workflow and `@task` for individual steps, allowing for better error handling, retries, and monitoring.
+- This ensures the process runs reliably and can be tracked or scheduled as needed.
+
+*Image showing the successful execution of the script.
 
 ## Installation
 
@@ -53,7 +77,7 @@ pip install pandas requests beautifulsoup4 translate google-auth google-auth-oau
 Run the main script to start the translation process:
 
 ```bash
-python Extract.py
+python Script.py
 ```
 
 The script will:
@@ -73,7 +97,53 @@ The script will:
 - `Script.py`: Main Python script containing the scraping, translation, and Google Drive logic.
 - `credentials.json`: Google API credentials (not included in repo for security).
 - `token.json`: OAuth token generated after first authentication (not included in repo).
-- `the_data.csv`: CSV file containing the extracted and translated data (containsa few example data entries).
+- `the_data.csv`: CSV file containing the extracted and translated data (contains example data entries).
+
+## How it Works
+
+### Google Drive Integration
+
+- The script uses the Google Drive API with OAuth credentials stored in `credentials.json` and token data saved in `token.json`.
+- `google_drive("SiteTranslation", "the_data.csv")` checks for a Drive folder named `SiteTranslation` and a file named `the_data.csv`.
+- If the folder or file is missing, the script creates them and uploads an empty CSV template.
+- If the file exists, it downloads the current CSV from Drive so the local dataset can be updated.
+
+### Incremental Updates
+
+- The program reads the downloaded CSV into a DataFrame and calls `newest_chapter(df)` to determine the latest chapter already stored.
+- It starts scraping from the next chapter number, so each run continues from the last saved position rather than reprocessing everything.
+- New chapter rows are appended to the existing CSV using `df.to_csv(..., mode="a", header=False, index=False)`.
+
+### Web Scraping
+
+- The script loads each chapter page with `requests.get()` and parses the HTML using `BeautifulSoup`.
+- It finds the chapter title from the element with `id="headline"` and the chapter text inside the `content` section.
+- All paragraph elements under `content` are extracted, cleaned, and joined into a single raw text string.
+- The scraper currently constructs chapter URLs using the novel base path and an incremental chapter number
+- There is a helper function, `get_highest_chapter`, to inspect a chapter list page and detect the highest available chapter number so that the program can handle none existent chapters.
+
+### Translation
+
+- Translation is handled by `translate.Translator(from_lang="zh", to_lang="en")`.
+- The `combine_translate` function walks each paragraph element, translates its Chinese text, and concatenates the English output into a single string.
+- The translated text is stored alongside the raw Chinese text in the CSV.
+
+### Data Persistence
+
+- The dataset is persisted locally in `the_data.csv` with columns: Chapter, Title, Rawtext, Translation.
+- After scraping and translation, the updated CSV is uploaded back to Google Drive using `update_file()`.
+- This keeps the remote Drive copy in sync with local incremental changes.
+
+#### Example Dataset
+
+Below is what `the_data.csv` looks like after scraping and translating multiple chapters:
+
+```
+   Chapter      Title                Rawtext             Translation
+0      1  Chapter Title 1  原文一... original text one...
+1      2  Chapter Title 2  原文二... original text two...
+2      3  Chapter Title 3  原文三... original text three...
+```
 
 ## Disclaimer
 
