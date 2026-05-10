@@ -48,7 +48,7 @@ The script automates the process of collecting and translating novel chapters, m
 
 ### Dependencies
 
-Install the required Python packages using pip:
+Create a python virtual enviorment ans install the required Python packages using pip:
 
 ```bash
 pip install pandas requests beautifulsoup4 translate google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client prefect
@@ -72,14 +72,6 @@ pip install pandas requests beautifulsoup4 translate google-auth google-auth-oau
    - The first run will prompt for Google Drive authentication.
    - Follow the instructions to authorize the application.
 
-## Usage
-
-Run the main script to start the translation process:
-
-```bash
-python Script.py
-```
-
 The script will:
 - Check for existing data on Google Drive.
 - Scrape new chapters from the website.
@@ -89,14 +81,14 @@ The script will:
 ### Configuration
 
 - Modify the `SCOPES` variable if different Google Drive permissions are needed.
-- Adjust the URL in `web_scrape` function for different novels or websites.
+- Adjust the URL in `web_scrape` function for different novels.
 - Change the chapter range in `web_scrape` for testing or limited runs.
 
 ## File Structure
 
 - `Script.py`: Main Python script containing the scraping, translation, and Google Drive logic.
-- `credentials.json`: Google API credentials (not included in repo for security).
-- `token.json`: OAuth token generated after first authentication (not included in repo).
+- `credentials.json`: Google API credentials (not included in repo for security). [Create before running the program]
+- `token.json`: OAuth token generated after first authentication (not included in repo for security). [Automatically created after first running the program]
 - `the_data.csv`: CSV file containing the extracted and translated data (contains example data entries).
 
 ## How it Works
@@ -121,6 +113,10 @@ The script will:
 - All paragraph elements under `content` are extracted, cleaned, and joined into a single raw text string.
 - The scraper currently constructs chapter URLs using the novel base path and an incremental chapter number
 - There is a helper function, `get_highest_chapter`, to inspect a chapter list page and detect the highest available chapter number so that the program can handle none existent chapters.
+  
+![Webpage HTML structure](https://github.com/BailyJarratt/Web-Novel-Translator/blob/6eb13a41b1c392f86c903c32b22bff6c0a443533/Images/image_2026-05-10_195121380.png)
+
+ *This image shows how the HTML behind the target webpages is structured.
 
 ### Translation
 
