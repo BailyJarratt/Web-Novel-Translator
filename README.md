@@ -28,7 +28,9 @@ The script automates the process of collecting and translating novel chapters, m
 
 ## Workflow
 
-*Diagram showing the data flow of the script.
+![Diagram illustrating the program dataflow](https://github.com/BailyJarratt/Web-Novel-Translator/blob/b478cb81f0e2777f6976c9c93558046443c40dfa/Images/Site%20Translation%20Project%20Diagram.png)
+
+*Diagram illustrating the program dataflow and stages.
 
 ### Orchestration with Prefect
 
@@ -36,7 +38,8 @@ The script automates the process of collecting and translating novel chapters, m
 - Functions are decorated with `@flow` for the main workflow and `@task` for individual steps, allowing for better error handling, retries, and monitoring.
 - This ensures the process runs reliably and can be tracked or scheduled as needed.
 
-*Image showing the successful execution of the script.
+![Image of the program being run and monitored on the Prefect dashboard](https://github.com/BailyJarratt/Web-Novel-Translator/blob/b478cb81f0e2777f6976c9c93558046443c40dfa/Images/Prefect%20Workflow.png)
+*Image displaying how the tasks are seperated and monitored using Prefect.
 
 ## Installation
 
